@@ -2,6 +2,7 @@ namespace com.invoiceapp;
 
 using { cuid, managed, sap.common.CodeList } from '@sap/cds/common';
 
+context master {
 // ---------------------------------------------------------
 // COST CENTER
 // Represents the department/cost center an invoice is billed to
@@ -26,7 +27,7 @@ entity Vendor : cuid, managed {
     street       : String(100);
     city         : String(50);
     country      : String(3);
-    invoices     : Association to many Invoice on invoices.vendor = $self;
+    invoices     : Association to many transaction.Invoice on invoices.vendor = $self;
 }
 
 // ---------------------------------------------------------
@@ -38,6 +39,9 @@ entity InvoiceStatus : CodeList {
     key code : String(2);
 }
 
+}
+
+context transaction {
 // ---------------------------------------------------------
 // INVOICE
 // Core entity — the invoice header
@@ -51,11 +55,11 @@ entity Invoice : cuid, managed {
     notes         : String(500);
 
     // --- Associations ---
-    vendor        : Association to Vendor     not null;
-    costCenter    : Association to CostCenter;
+    vendor        : Association to master.Vendor     not null;
+    costCenter    : Association to master.CostCenter;
 
     status_code   : String(2)    not null default 'D';
-    status        : Association to InvoiceStatus on status.code = status_code;
+    status        : Association to master.InvoiceStatus on status.code = status_code;
 
     // --- Composition: Invoice owns its line items ---
     lineItems     : Composition of many LineItem on lineItems.invoice = $self;
@@ -66,11 +70,13 @@ entity Invoice : cuid, managed {
 // Individual line on an invoice (product/service billed)
 // ---------------------------------------------------------
 entity LineItem : cuid, managed {
-    invoice        : Association to Invoice;
+    invoice        : Association to transaction.Invoice;
     positionNumber : Integer;
     description    : String(200) not null;
     quantity       : Decimal(10,2);
     unitPrice      : Decimal(13,2);
     amount         : Decimal(13,2);  // Computed field: quantity × unitPrice
                                      // Must be kept in sync via service handler
+}
+
 }

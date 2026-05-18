@@ -1,0 +1,6 @@
+code,name,descr
+D,Draft,Invoice saved as draft - not yet submitted
+SB,Submitted,Invoice submitted and awaiting approval
+AP,Approved,Invoice approved and cleared for payment
+RJ,Rejected,Invoice rejected - requires revision
+PD,Paid,Invoice has been paid successfully

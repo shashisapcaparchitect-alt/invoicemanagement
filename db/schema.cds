@@ -37,6 +37,8 @@ entity Vendor : cuid, managed {
 // ---------------------------------------------------------
 entity InvoiceStatus : CodeList {
     key code : String(2);
+    name: String(10);
+    descr: String(80);
 }
 
 }

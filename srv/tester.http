@@ -1,0 +1,100 @@
+###New call to make the test work
+GET http://localhost:4004/invoice/Invoices
+
+###Get All line items
+GET http://localhost:4004/invoice/LineItems
+
+###Get lineItems of specific invoice
+GET http://localhost:4004/invoice/Invoices/30000000-0000-0000-0000-000000000001/lineItems
+
+###Get lineItems of specific invoice with expand
+GET http://localhost:4004/invoice/Invoices/30000000-0000-0000-0000-000000000001?$expand=lineItems
+
+###Get all Vendors
+GET http://localhost:4004/invoice/Vendors
+
+
+###Get all CostCenters
+GET http://localhost:4004/invoice/CostCenters
+
+
+###Get all Invoice Statuses (CodeList)
+GET http://localhost:4004/invoice/InvoiceStatus
+
+
+###OData Metadata — verify all entities are exposed
+GET http://localhost:4004/invoice/$metadata
+
+###Deep Insert - Create new invoice with line items in one call
+
+POST http://localhost:4004/invoice/Invoices
+Content-Type: application/json
+
+{
+  "ID": "30000000-0000-0000-0000-000000000005",
+  "invoiceNumber": "INV-2024-001",
+  "invoiceDate": "2024-01-15",
+  "dueDate": "2024-02-14",
+  "grossAmount": "40000",
+  "currency": "INR",
+  "notes": "Laptop and accessories for new joiners",
+  "vendor_ID": "20000000-0000-0000-0000-000000000001",
+  "costCenter_ID": "10000000-0000-0000-0000-000000000001",
+  "status_code": "D",
+  "lineItems": [
+    {
+      "ID": "40000000-0000-0000-0000-000000000011",
+      "createdAt": "2026-05-20T06:02:16.431Z",
+      "createdBy": "anonymous",
+      "modifiedAt": "2026-05-20T06:02:16.431Z",
+      "modifiedBy": "anonymous",
+      "invoice_ID": "30000000-0000-0000-0000-000000000001",
+      "positionNumber": 1,
+      "description": "Dell Laptop 15 inch",
+      "quantity": 2,
+      "unitPrice": 60000,
+      "amount": 120000
+    },
+    {
+      "ID": "40000000-0000-0000-0000-000000000012",
+      "createdAt": "2026-05-20T06:02:16.431Z",
+      "createdBy": "anonymous",
+      "modifiedAt": "2026-05-20T06:02:16.431Z",
+      "modifiedBy": "anonymous",
+      "invoice_ID": "30000000-0000-0000-0000-000000000001",
+      "positionNumber": 2,
+      "description": "Laptop Bag",
+      "quantity": 2,
+      "unitPrice": 5000,
+      "amount": 10000
+    },
+    {
+      "ID": "40000000-0000-0000-0000-000000000013",
+      "createdAt": "2026-05-20T06:02:16.431Z",
+      "createdBy": "anonymous",
+      "modifiedAt": "2026-05-20T06:02:16.431Z",
+      "modifiedBy": "anonymous",
+      "invoice_ID": "30000000-0000-0000-0000-000000000001",
+      "positionNumber": 3,
+      "description": "Wireless Mouse and Keyboard",
+      "quantity": 2,
+      "unitPrice": 10000,
+      "amount": 20000
+    }
+  ]
+}
+
+###Add new line item for existing invoice
+POST http://localhost:4004/invoice/LineItems
+Content-Type: application/json
+
+{
+    "invoice_ID": "30000000-0000-0000-0000-000000000001",
+    "positionNumber": 5,
+    "description": "USB Hub",
+    "quantity": 90,
+    "unitPrice": 5000
+}
+
+###SubmitInvoice Action - custom action to change invoice status to Submitted
+POST http://localhost:4004/invoice/Invoices(30000000-0000-0000-0000-000000000005)/InvoiceService.submitInvoice

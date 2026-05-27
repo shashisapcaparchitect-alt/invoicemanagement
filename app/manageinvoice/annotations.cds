@@ -171,7 +171,7 @@ annotate service.Invoices with @(UI: {
     },
 });
 
-annotate service.LineItems @(
+annotate service.LineItems with @(
     UI: {
         LineItem: [
         {Value: positionNumber},

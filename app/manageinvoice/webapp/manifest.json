@@ -49,7 +49,8 @@
       "libs": {
         "sap.m": {},
         "sap.ui.core": {},
-        "sap.fe.templates": {}
+        "sap.fe.templates": {},
+        "sap.f": {}
       }
     },
     "contentDensities": {
@@ -81,22 +82,37 @@
       "css": []
     },
     "routing": {
-      "config": {},
+      "config": {
+        "flexibleColumnLayout": {
+          "defaultTwoColumnLayoutType": "TwoColumnsBeginExpanded",
+          "defaultThreeColumnLayoutType": "ThreeColumnsMidExpanded"
+        },
+        "routerClass": "sap.f.routing.Router"
+      },
       "routes": [
         {
           "pattern": ":?query:",
           "name": "InvoicesList",
-          "target": "InvoicesList"
+          "target": [
+            "InvoicesList"
+          ]
         },
         {
           "pattern": "Invoices({key}):?query:",
           "name": "InvoicesObjectPage",
-          "target": "InvoicesObjectPage"
+          "target": [
+            "InvoicesList",
+            "InvoicesObjectPage"
+          ]
         },
         {
           "pattern": "Invoices({key})/lineItems({key2}):?query:",
           "name": "LineItemsObjectPage",
-          "target": "LineItemsObjectPage"
+          "target": [
+            "InvoicesList",
+            "InvoicesObjectPage",
+            "LineItemsObjectPage"
+          ]
         }
       ],
       "targets": {
@@ -124,7 +140,9 @@
               },
               "initialLoad": "Enabled"
             }
-          }
+          },
+          "controlAggregation": "beginColumnPages",
+          "contextPattern": ""
         },
         "InvoicesObjectPage": {
           "type": "Component",
@@ -142,7 +160,9 @@
                 }
               }
             }
-          }
+          },
+          "controlAggregation": "midColumnPages",
+          "contextPattern": "/Invoices({key})"
         },
         "LineItemsObjectPage": {
           "type": "Component",
@@ -153,9 +173,17 @@
               "editableHeaderContent": false,
               "contextPath": "/Invoices/lineItems"
             }
-          }
+          },
+          "controlAggregation": "endColumnPages",
+          "contextPattern": "/Invoices({key})/lineItems({key2})"
         }
       }
+    },
+    "rootView": {
+      "viewName": "sap.fe.templates.RootContainer.view.Fcl",
+      "type": "XML",
+      "async": true,
+      "id": "appRootView"
     }
   },
   "sap.fiori": {

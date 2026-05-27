@@ -80,5 +80,4 @@ entity LineItem : cuid, managed {
     amount         : Decimal(13,2);  // Computed field: quantity × unitPrice
                                      // Must be kept in sync via service handler
 }
-
 }

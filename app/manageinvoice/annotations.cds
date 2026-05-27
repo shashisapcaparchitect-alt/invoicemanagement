@@ -99,3 +99,114 @@ annotate service.Invoices with @(UI: {
         status.name
     ],
 });
+
+// ──────────────────────────────────────────────────────
+// OBJECT PAGE — Invoice Detail
+// ──────────────────────────────────────────────────────
+
+annotate service.Invoices with @(UI: {
+    Facets: [
+        {
+            $Type : 'UI.CollectionFacet',
+            Label : 'Invoice Information',
+            Facets: [
+                {
+                    $Type : 'UI.ReferenceFacet',
+                    Label : 'Invoice Details',
+                    Target: '@UI.Identification'
+                },
+                {
+                    $Type : 'UI.ReferenceFacet',
+                    Label : 'Vendor & Cost Center',
+                    Target: '@UI.FieldGroup#VendorDetails'
+                },
+                {
+                    $Type : 'UI.ReferenceFacet',
+                    Label : 'Notes',
+                    Target: '@UI.FieldGroup#AdditionalInfo'
+                }
+            ]
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Label : 'Line Items',
+            Target: 'lineItems/@UI.LineItem'
+        }
+    ],
+
+    Identification: [
+        {
+            $Type : 'UI.DataField',
+            Value : invoiceNumber,
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : invoiceDate,
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : dueDate,
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : currency,
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : grossAmount,
+        }
+        ],
+
+    FieldGroup #VendorDetails : {
+        Label: 'Vendor & Cost Center',
+        Data : [
+            {Value: vendor_ID},
+            {Value: costCenter_ID}
+        ]
+    },
+
+    FieldGroup #AdditionalInfo: {
+        Label: 'Additional Information',
+        Data : [{Value: notes}]
+    },
+});
+
+annotate service.LineItems @(
+    UI: {
+        LineItem: [
+        {Value: positionNumber},
+        {Value: description},
+        {Value: quantity},
+        {Value: unitPrice},
+        {Value: amount}
+    ],
+        Facets:[
+            {
+                $Type: 'UI.ReferenceFacet',
+                Label: 'Item Details',
+                Target: '@UI.Identification'
+            }
+        ],
+    Identification  : [
+        {
+            $Type: 'UI.DataField',
+            Value: positionNumber
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: description
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: quantity
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: unitPrice
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: amount
+        }
+    ],
+ });

@@ -88,6 +88,14 @@ annotate service.Invoices with @(UI: {
         {
             position: 80,
             Value   : currency
+        },
+
+        // ── Action Button in List Report toolbar ──────
+        {
+            $Type   : 'UI.DataFieldForAction',
+            Action  : 'service.submitInvoice',
+            Label   : 'Submit Invoice',
+            Inline  : false
         }
     ],
 
@@ -135,6 +143,13 @@ annotate service.Invoices with @(UI: {
     ],
 
     Identification: [
+        // ── Action Button in Object Page header ───────
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'service.submitInvoice',
+            Label : 'Submit Invoice'
+        },
+        // ── Action Button in Object Page header ───────
         {
             $Type : 'UI.DataField',
             Value : invoiceNumber,
@@ -154,6 +169,10 @@ annotate service.Invoices with @(UI: {
         {
             $Type : 'UI.DataField',
             Value : grossAmount,
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: status.name
         }
         ],
 
@@ -210,3 +229,22 @@ annotate service.LineItems with @(
         }
     ],
  });
+
+// ──────────────────────────────────────────────────────
+// SIDE EFFECTS — submitInvoice action
+//
+// After submitInvoice completes:
+//   1. Re-read status_code from server (direct property)
+//   2. Re-fetch the status association (to get updated status.name)
+//
+// This ensures the 'Status' column in the List Report
+// and the status field on the Object Page both update automatically
+// ──────────────────────────────────────────────────────
+annotate service.Invoices with actions {
+    submitInvoice @(
+        Common.SideEffects: {
+            TargetProperties: ['status_code'],
+            TargetEntities  : ['status']
+        }
+    );
+};

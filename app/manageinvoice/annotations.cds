@@ -242,6 +242,10 @@ annotate service.LineItems with @(
 // ──────────────────────────────────────────────────────
 annotate service.Invoices with actions {
     submitInvoice @(
+        // Disable button for draft records (IsActiveEntity = false)
+        // Enable button only for saved active records (IsActiveEntity = true)
+        Core.OperationAvailable: IsActiveEntity,
+        
         Common.SideEffects: {
             TargetProperties: ['status_code'],
             TargetEntities  : ['status']

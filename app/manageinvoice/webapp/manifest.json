@@ -43,7 +43,7 @@
     }
   },
   "sap.ui5": {
-    "flexEnabled": true,
+    "flexEnabled": false,
     "dependencies": {
       "minUI5Version": "1.148.0",
       "libs": {
@@ -156,6 +156,20 @@
                 "lineItems": {
                   "detail": {
                     "route": "LineItemsObjectPage"
+                  }
+                }
+              },
+              "content": {
+                "body": {
+                  "sections": {
+                    "InvoiceSummary": {
+                      "template": "com.invoiceapp.manageinvoice.ext.fragment.InvoiceSummary",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "lineItems::LineItem"
+                      },
+                      "title": "Invoice Summary"
+                    }
                   }
                 }
               }

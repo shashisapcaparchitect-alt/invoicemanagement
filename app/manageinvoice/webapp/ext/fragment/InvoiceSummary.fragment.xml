@@ -1,3 +1,52 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:macros="sap.fe.macros">
-	
+	<VBox id="VBox" core:require="{ handler: 'com/invoiceapp/manageinvoice/ext/fragment/InvoiceSummary'}">
+       <!-- ═══════════════════════════════════════
+             STATS DISPLAY
+             Bound to a local JSONModel named 'stats'
+             Set on this VBox by the JS handler
+             on first button click
+        ════════════════════════════════════════ -->
+        <Title text="Invoice Statistics"
+               class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"/>
+
+        <HBox justifyContent="SpaceAround"
+              class="sapUiSmallMarginTop sapUiSmallMarginBottom">
+
+            <VBox alignItems="Center" class="sapUiSmallMarginBeginEnd">
+                <ObjectNumber number="{stats>/totalItems}"
+                              unit="Items"
+                              emphasized="true"/>
+                <Label text="Total Line Items"
+                       class="sapUiTinyMarginTop"/>
+            </VBox>
+
+            <VBox alignItems="Center" class="sapUiSmallMarginBeginEnd">
+                <ObjectNumber number="{stats>/totalAmount}"
+                              unit="INR"
+                              emphasized="true"/>
+                <Label text="Total Amount"
+                       class="sapUiTinyMarginTop"/>
+            </VBox>
+
+            <VBox alignItems="Center" class="sapUiSmallMarginBeginEnd">
+                <ObjectNumber number="{stats>/highestAmount}"
+                              unit="INR"
+                              state="Warning"/>
+                <Label text="Highest Item"
+                       class="sapUiTinyMarginTop"/>
+            </VBox>
+
+        </HBox>
+
+        <!-- ═══════════════════════════════════════
+             LOAD BUTTON
+             Must be a DIRECT child of the VBox above.
+             This is intentional — explained below.
+        ════════════════════════════════════════ -->
+        <Button text="Load Stats"
+                icon="sap-icon://refresh"
+                type="Emphasized"
+                press="handler.onLoadStats"
+                class="sapUiSmallMarginBeginEnd sapUiSmallMarginBottom"/>
+       </VBox>
 </core:FragmentDefinition>

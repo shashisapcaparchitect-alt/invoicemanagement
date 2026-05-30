@@ -48,5 +48,49 @@
                 type="Emphasized"
                 press="handler.onLoadStats"
                 class="sapUiSmallMarginBeginEnd sapUiSmallMarginBottom"/>
+
+       <!-- ══════════════════════════════════════
+             QUICK ADD FORM (Step 4 — NEW)
+             Inputs are two-way bound to a 'form'
+             JSONModel set on this VBox.
+
+             Freestyle analogy:
+             In freestyle you'd use this.byId('inputId').getValue()
+             Here we use a JSONModel bound to inputs via {form>/field}
+             and read values from the model — no byId needed.
+        ═══════════════════════════════════════ -->
+        <Title text="Quick Add Line Item"
+               class="sapUiSmallMarginBeginEnd sapUiMediumMarginTop"/>
+        <Label text="Description" required="true"
+               class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop"/>
+        <Input value="{form>/description}"
+               placeholder="e.g. Dell Monitor 24 inch"
+               class="sapUiSmallMarginBeginEnd"/>
+
+        <Label text="Quantity" required="true"
+               class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop"/>
+        <Input value="{form>/quantity}"
+               type="Number"
+               placeholder="1"
+               class="sapUiSmallMarginBeginEnd"/>
+
+        <Label text="Unit Price (INR)" required="true"
+               class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop"/>
+        <Input value="{form>/unitPrice}"
+               type="Number"
+               placeholder="0.00"
+               class="sapUiSmallMarginBeginEnd"/>
+
+        <HBox class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop
+                     sapUiSmallMarginBottom">
+            <Button text="Clear"
+                    icon="sap-icon://clear-all"
+                    press="handler.onClearForm"
+                    class="sapUiSmallMarginEnd"/>
+            <Button text="Add Line Item"
+                    icon="sap-icon://add"
+                    type="Emphasized"
+                    press="handler.onAddLineItem"/>
+        </HBox>
        </VBox>
 </core:FragmentDefinition>

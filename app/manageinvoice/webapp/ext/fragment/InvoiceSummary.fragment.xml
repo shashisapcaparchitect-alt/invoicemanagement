@@ -53,11 +53,6 @@
              QUICK ADD FORM (Step 4 — NEW)
              Inputs are two-way bound to a 'form'
              JSONModel set on this VBox.
-
-             Freestyle analogy:
-             In freestyle you'd use this.byId('inputId').getValue()
-             Here we use a JSONModel bound to inputs via {form>/field}
-             and read values from the model — no byId needed.
         ═══════════════════════════════════════ -->
         <Title text="Quick Add Line Item"
                class="sapUiSmallMarginBeginEnd sapUiMediumMarginTop"/>
@@ -80,6 +75,15 @@
                type="Number"
                placeholder="0.00"
                class="sapUiSmallMarginBeginEnd"/>
+
+         <!-- Live calculated amount — updates as user types -->
+        <Label text="Calculated Amount"
+               class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop"/>
+        <ObjectNumber number="{form>/calculatedAmount}"
+                      unit="INR"
+                      emphasized="true"
+                      state="Success"
+                      class="sapUiSmallMarginBeginEnd sapUiSmallMarginBottom"/>
 
         <HBox class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop
                      sapUiSmallMarginBottom">

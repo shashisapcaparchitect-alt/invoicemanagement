@@ -6,6 +6,7 @@ service InvoiceService @(path: '/invoice') {
     actions {
         action submitInvoice() returns Invoices;
     };
+    // @odata.draft.enabled
     entity LineItems as projection on transaction.LineItem;
     entity Vendors as projection on master.Vendor;
     entity CostCenters as projection on master.CostCenter;

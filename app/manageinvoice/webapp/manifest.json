@@ -198,6 +198,15 @@
       "type": "XML",
       "async": true,
       "id": "appRootView"
+    },
+    "extends": {
+      "extensions": {
+        "sap.ui.controllerExtensions": {
+          "sap.fe.templates.ObjectPage.ObjectPageController": {
+            "controllerName": "com.invoiceapp.manageinvoice.ext.controller.ObjectPageExtension"
+          }
+        }
+      }
     }
   },
   "sap.fiori": {

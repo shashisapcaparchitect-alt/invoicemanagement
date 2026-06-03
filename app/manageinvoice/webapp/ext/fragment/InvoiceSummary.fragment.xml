@@ -96,5 +96,60 @@
                     type="Emphasized"
                     press="handler.onAddLineItem"/>
         </HBox>
+
+       <!-- ═══════════════════════════════════════════════
+     Relative binding from Invoice context.
+════════════════════════════════════════════════ -->
+<Title text="Line Items Overview"
+       class="sapUiSmallMarginBeginEnd sapUiMediumMarginTop"/>
+
+<Table id="idLineItemsTable"
+       class="sapUiSmallMarginBottom"
+       noDataText="No line items. Use Quick Add above."
+       items="{
+           path      : 'lineItems',
+           parameters: { $$ownRequest: true }
+       }">
+
+    <columns>
+        <Column width="5rem">
+            <Text text="Pos"/>
+        </Column>
+        <Column>
+            <Text text="Description"/>
+        </Column>
+        <Column width="5rem">
+            <Text text="Qty"/>
+        </Column>
+        <Column width="7rem">
+            <Text text="Unit Price"/>
+        </Column>
+        <Column width="7rem">
+            <Text text="Amount"/>
+        </Column>
+        <Column width="6rem">
+            <Text text=""/>
+        </Column>
+    </columns>
+
+    <items>
+        <ColumnListItem>
+            <cells>
+                <Text text="{positionNumber}"/>
+                <Text text="{description}"/>
+                <Text text="{quantity}"/>
+                <Text text="{unitPrice}"/>
+                <ObjectNumber number="{amount}"
+                              unit="INR"
+                              state="Success"/>
+                <Button icon="sap-icon://delete"
+                        type="Reject"
+                        tooltip="Delete line item"
+                        press="handler.onDeleteLineItem"/>
+            </cells>
+        </ColumnListItem>
+    </items>
+
+</Table>
        </VBox>
 </core:FragmentDefinition>

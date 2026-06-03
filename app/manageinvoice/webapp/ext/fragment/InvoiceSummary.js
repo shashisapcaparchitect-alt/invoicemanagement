@@ -1,93 +1,3 @@
-// sap.ui.define([
-//     "sap/m/MessageToast",
-//     'sap/ui/model/json/JSONModel',
-//     'sap/ui/model/Filter',
-//     'sap/ui/model/FilterOperator'
-// ], function(MessageToast, JSONModel, Filter, FilterOperator) {
-//     'use strict';
-
-//     return {
-//         /**
-//          * Generated event handler.
-//          *
-//          * @param oEvent the event object provided by the event provider.
-//          */
-//         onPress: function(oEvent) {
-//             MessageToast.show("Custom handler invoked.");
-//         },
-
-//         // ─────────────────────────────────────────────────────
-//         // READ — Load and compute line item statistics
-//         //
-//         // Called when user clicks "Load Stats" button
-//         // ─────────────────────────────────────────────────────
-//         onLoadStats: function (oEvent) {
-//             const oButton = oEvent.getSource();
-
-//             // ── Step 1: Set up local JSONModel on the VBox ──
-
-//             const oVBox = oButton.getParent();
-
-//             if (!oVBox.getModel('stats')) {
-//                 oVBox.setModel(
-//                     new JSONModel({
-//                         totalItems   : '0',
-//                         totalAmount  : '0.00',
-//                         highestAmount: '0.00'
-//                     }),
-//                     'stats'
-//                 );
-//             }
-
-
-//             // ── Step 2: Get Invoice ID from binding context ──
-
-//             const oInvoiceContext = oButton.getBindingContext();
-//             const sInvoiceID      = oInvoiceContext.getProperty('ID');
-
-
-//             // ── Step 3: OData V4 READ ────────────────────────
-
-//             const oModel      = oButton.getModel();
-//             const oListBinding = oModel.bindList(
-//                 '/LineItems',
-//                 null, null,
-//                 [new Filter('invoice_ID', FilterOperator.EQ, sInvoiceID)]
-//             );
-
-//             oListBinding
-//                 .requestContexts(0, Infinity)
-//                 .then(function (aContexts) {
-
-//                     // Convert Contexts → plain JSON
-//                     const aItems = aContexts.map(c => c.getObject());
-
-//                     // Compute stats
-//                     const nTotal       = aItems.length;
-//                     const fTotalAmount = aItems.reduce(
-//                         (sum, item) => sum + (item.amount || 0), 0
-//                     );
-//                     const fHighest     = nTotal > 0
-//                         ? Math.max(...aItems.map(i => i.amount || 0))
-//                         : 0;
-
-//                     // Update the JSONModel
-//                     oVBox.getModel('stats').setData({
-//                         totalItems   : String(nTotal),
-//                         totalAmount  : fTotalAmount.toFixed(2),
-//                         highestAmount: fHighest.toFixed(2)
-//                     });
-
-//                     MessageToast.show('Stats loaded successfully!');
-//                 })
-//                 .catch(function (oError) {
-//                     MessageToast.show('Failed to load stats: ' + oError.message);
-//                 });
-//         }
-
-//     };
-// });
-
 sap.ui.define([
     'sap/m/MessageToast',
     'sap/m/MessageBox',
@@ -123,16 +33,17 @@ sap.ui.define([
     //   'form'  model → two-way bound to the Quick Add inputs
     // ─────────────────────────────────────────────────────────
     function initModels(oVBox) {
-        if (!oVBox.getModel('stats')) {
-            oVBox.setModel(
-                new JSONModel({
-                    totalItems   : '0',
-                    totalAmount  : '0.00',
-                    highestAmount: '0.00'
-                }),
-                'stats'
-            );
-        }
+        // if (!oVBox.getModel('stats')) {
+        //     oVBox.setModel(
+        //         new JSONModel({
+        //             totalItems   : '0',
+        //             totalAmount  : '0.00',
+        //             highestAmount: '0.00'
+        //         }),
+        //         'stats'
+        //     );
+        // } commented this code after we maintained ObjectPageExtension controller to handle the EditFlow of the page.
+        //  Now the stats model, gets initiated in the onInit of the ObjectPageExtension controller
         if (!oVBox.getModel('form')) {
             oVBox.setModel(
                 new JSONModel({
@@ -172,12 +83,30 @@ sap.ui.define([
                 const fHighest = nTotal > 0
                     ? Math.max(...aItems.map(i => i.amount || 0))
                     : 0;
+                
+                // ── Get model explicitly from View via propagation ──
+            // 'stats' is owned by Controller Extension on the View.
+            // oVBox.getModel('stats') finds it by walking UP to View.
+            // This makes the ownership clear — section handler
+            // never sets stats, only READS and UPDATES it.
+            const oStatsModel = oVBox.getModel('stats');
 
-                oVBox.getModel('stats').setData({
-                    totalItems   : String(nTotal),
-                    totalAmount  : fTotal.toFixed(2),
-                    highestAmount: fHighest.toFixed(2)
-                });
+            if (!oStatsModel) {
+                // Guard: Controller Extension hasn't initialised yet
+                // This should not happen in normal flow
+                return;
+            }
+
+            oStatsModel.setData({
+                totalItems   : String(nTotal),
+                totalAmount  : fTotal.toFixed(2),
+                highestAmount: fHighest.toFixed(2)
+            });
+                // oStatsModel.setData({
+                //     totalItems   : String(nTotal),
+                //     totalAmount  : fTotal.toFixed(2),
+                //     highestAmount: fHighest.toFixed(2)
+                // });
             });
     }
 
@@ -344,8 +273,8 @@ sap.ui.define([
         });
 
         // Refresh stats
-        const sInvoiceID = oInvoiceContext.getProperty('ID');
-        refreshStats(oVBox, sInvoiceID, oModel);
+        //const sInvoiceID = oInvoiceContext.getProperty('ID');
+        //refreshStats(oVBox, sInvoiceID, oModel);
 
     } catch (oError) {
         MessageBox.error('Failed to add line item.\n' + oError.message);
@@ -365,6 +294,81 @@ sap.ui.define([
             });
 
             MessageToast.show('Form cleared');
+        },
+
+    
+// ─────────────────────────────────────────────────────────
+// DELETE — Remove a line item via OData V4 context.delete()
+// ─────────────────────────────────────────────────────────
+onDeleteLineItem: function (oEvent) {
+    const oSource          = oEvent.getSource();
+
+    // ── Line item context (the row being deleted) ────────
+    const oLineItemContext = oSource.getBindingContext();
+
+    // ── Invoice context (parent page context) ────────────
+    // VBox inherits Invoice binding context from Object Page
+    const oVBox            = getRootVBox(oSource);
+    const oInvoiceContext  = oVBox.getBindingContext();
+
+    // ── Draft mode check ─────────────────────────────────
+    const bIsActiveEntity  = oLineItemContext
+                                .getProperty('IsActiveEntity');
+
+    if (bIsActiveEntity) {
+        MessageBox.information(
+            'Please click "Edit" on the Invoice first.\n\n' +
+            'Line items can only be deleted while in edit mode.'
+        );
+        return;
+    }
+
+    // ── Get item description for confirm message ─────────
+    const sDescription = oLineItemContext
+                            .getProperty('description');
+
+    // ── Confirm before deleting ──────────────────────────
+    MessageBox.confirm(
+        'Delete line item "' + sDescription + '"?',
+        {
+            title  : 'Confirm Delete',
+            actions: [
+                MessageBox.Action.OK,
+                MessageBox.Action.CANCEL
+            ],
+            onClose: async function (sAction) {
+                if (sAction !== MessageBox.Action.OK) return;
+
+                try {
+                    // ── OData V4 DELETE ──────────────────
+                    // Context IS the record.
+                    // delete() sends DELETE to the server.
+                    // Awaiting it waits for server confirmation.
+                    await oLineItemContext.delete();
+
+                    MessageToast.show(
+                        '"' + sDescription + '" deleted'
+                    );
+
+                    // ── Refresh Invoice context ──────────
+                    // Forces FE line items table above to
+                    // re-fetch and reflect the deletion
+                    oInvoiceContext.refresh();
+
+                    // ── Refresh stats ────────────────────
+                    const sInvoiceID = oInvoiceContext
+                                          .getProperty('ID');
+                    const oModel     = oSource.getModel();
+                    refreshStats(oVBox, sInvoiceID, oModel);
+
+                } catch (oError) {
+                    MessageBox.error(
+                        'Delete failed.\n' + oError.message
+                    );
+                }
+            }
         }
+    );
+}
     };
 });

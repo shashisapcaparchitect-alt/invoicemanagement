@@ -8,7 +8,10 @@ GET http://localhost:4004/invoice/LineItems
 GET http://localhost:4004/invoice/Invoices/30000000-0000-0000-0000-000000000001/lineItems
 
 ###Get lineItems of specific invoice with expand
-GET http://localhost:4004/invoice/Invoices/30000000-0000-0000-0000-000000000001?$expand=lineItems
+GET http://localhost:4004/invoice/Invoices/30000000-0000-0000-0000-000000000002?$expand=lineItems
+
+### 4. Get Invoice with line items expanded
+GET http://localhost:4004/invoice/Invoices(ID=30000000-0000-0000-0000-000000000002,IsActiveEntity=true)?$expand=lineItems
 
 ###Get all Vendors
 GET http://localhost:4004/invoice/Vendors

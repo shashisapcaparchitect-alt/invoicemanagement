@@ -77,12 +77,13 @@ sap.ui.define([
             .then(function (aContexts) {
                 const aItems   = aContexts.map(c => c.getObject());
                 const nTotal   = aItems.length;
-                const fTotal   = aItems.reduce(
-                    (s, i) => s + (i.amount || 0), 0
-                );
-                const fHighest = nTotal > 0
-                    ? Math.max(...aItems.map(i => i.amount || 0))
-                    : 0;
+                // ── parseFloat() handles both string "1750.00" and number 1750 ──
+            const fTotal   = aItems.reduce(
+                (s, i) => s + parseFloat(i.amount || 0), 0
+            );
+            const fHighest = nTotal > 0
+                ? Math.max(...aItems.map(i => parseFloat(i.amount || 0)))
+                : 0;
                 
                 // ── Get model explicitly from View via propagation ──
             // 'stats' is owned by Controller Extension on the View.

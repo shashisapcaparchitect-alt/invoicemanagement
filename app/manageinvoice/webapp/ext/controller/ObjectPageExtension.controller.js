@@ -69,12 +69,13 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension',
                     .then(function (aContexts) {
                         const aItems   = aContexts.map(c => c.getObject());
                         const nTotal   = aItems.length;
-                        const fTotal   = aItems.reduce(
-                            (s, i) => s + (i.amount || 0), 0
-                        );
-                        const fHighest = nTotal > 0
-                            ? Math.max(...aItems.map(i => i.amount || 0))
-                            : 0;
+                        // ── parseFloat() fix ──────────────────────────────
+            const fTotal   = aItems.reduce(
+                (s, i) => s + parseFloat(i.amount || 0), 0
+            );
+            const fHighest = nTotal > 0
+                ? Math.max(...aItems.map(i => parseFloat(i.amount || 0)))
+                : 0;
 
                         oStatsModel.setData({
                             totalItems   : String(nTotal),

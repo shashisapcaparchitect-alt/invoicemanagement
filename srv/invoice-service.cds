@@ -1,8 +1,13 @@
 using { com.invoiceapp.master, com.invoiceapp.transaction } from '../db/schema';
 
-service InvoiceService @(path: '/invoice') {
+service InvoiceService @(path: '/invoice', requires: 'authenticated-user') {
     @odata.draft.enabled
-    entity Invoices as projection on transaction.Invoice
+    entity Invoices @(
+        restrict: [
+            {grant: ['READ'], to: 'Display'},
+            {grant: ['WRITE', 'DELETE', 'submitInvoice'], to: 'Edit'}
+        ]
+    ) as projection on transaction.Invoice
     actions {
         action submitInvoice() returns Invoices;
     };
